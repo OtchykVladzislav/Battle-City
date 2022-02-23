@@ -1,25 +1,18 @@
-const boxes = 40;
-var direction = "top";
-const over = new Image()
-over.src = "src/images/over.png"
+export const boxes = 40;
 
-var tank = {
-    x: 320,
-    y: 600
+export const ctx = document.getElementById('game').getContext("2d");
+
+export const img = new Image()
+img.src = "src/images/base.png"
+
+export var tank = {
+    x: 8 *boxes,
+    y: 15 *boxes,
+    shoot: false,
+    health: 100
 }
 
-
-var positions = [
-    {x: 0, y: 0},
-    {x: 57, y: 0},
-    {x: 113, y: 0},
-    {x: 171, y: 0}
-]
-
-var target = positions[0]
-
-
-var wall = [
+export const wall = [
     {x:1* boxes, y:1* boxes},
     {x:2* boxes, y:1* boxes},
     {x:3* boxes, y:1* boxes},
@@ -116,44 +109,3 @@ var wall = [
     {x:14* boxes, y:10* boxes},
     {x:14* boxes, y:11* boxes}
 ]
-
-
-
-
-function touchWithLine() {
-    return tank.x > 640 || tank.x < 0 || tank.y > 640 || tank.y < 0
-}
-
-
-function checkDirection(e){
-    if(e.keyCode === 38 && tank.y > 0){
-        target = positions[0]
-        tank.y -= boxes;
-    }
-    else if(e.keyCode === 40 && tank.y < 600){
-        target = positions[2]
-        tank.y += boxes;
-    }
-    else if(e.keyCode === 37 && tank.x > 0){
-        target = positions[3]
-        tank.x -= boxes;
-    }
-    else if(e.keyCode === 39 && tank.x < 600){
-        target = positions[1]
-        tank.x += boxes;
-    }
-}
-
-document.addEventListener("keydown", checkDirection);
-
-var update = setInterval(() => {
-    game()
-}, 100)
-
-var game = () => {
-    ctx.drawImage(img, 281, 239, 27, 27, 0, 0, 640, 640);
-    for(let i=0; i < wall.length; i++){
-        ctx.drawImage(img, 225, 155, 27, 27, wall[i].x, wall[i].y, boxes, boxes);
-    }
-    ctx.drawImage(img, target.x, target.y, 27, 27, tank.x, tank.y, boxes, boxes);
-}

@@ -1,10 +1,8 @@
-const canvas = document.getElementById('game');
-const ctx = canvas.getContext("2d");
-const img = new Image()
-img.src = "src/images/base.png"
+import { img, ctx } from "./modules/util.js";
 
 let change = 250;
 var mode;
+export var start = false;
 
 function onChange(e){
     if(e.keyCode === 38 || e.keyCode === 87){
@@ -42,13 +40,15 @@ function Menu() {
     ctx.drawImage(img, 464, 394, 10, 10, 440, 290, 20, 20)
     ctx.drawImage(img, 479, 394, 10, 10, 480, 290, 20, 20)
 
-    document.addEventListener("keydown", (e) => {
-        if(e.keyCode === 13 || e.keyCode === 32){
-            clearInterval(interval)
-            game()
-        }
-    })
-
+    if(start == true){
+        clearInterval(interval)
+    }
 }
 
-let interval = setInterval(Menu, 10)
+document.addEventListener("keydown", (e) => {
+    if(e.keyCode == 13){
+        start = true;
+    }
+})
+
+var interval = setInterval(Menu, 10)
