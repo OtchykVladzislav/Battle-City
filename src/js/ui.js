@@ -25,17 +25,16 @@ function drawElem() {
     context.font='15px PixelFont';
     context.fillText(`${player.health}`, 85, 400);
     context.fillText(`${stage}`, 70, 590);
+    if(mode === 1){
+        context.fillText(`${playerTwo.health}`, 85, 460);
+    }
 }
 
 function elemUI() {
     context.drawImage(img, 658, 322, 29, 27, 70, 520, 40, 40);
-    if(mode === 0){
-        context.drawImage(img, 660, 238, 26, 13, 60, 350, 40, 30);
-        context.drawImage(img, 660, 252, 12, 15, 50, 380, 25, 25);
-    }
-    else if(mode === 1){
-        context.drawImage(img, 660, 238, 26, 13, 60, 350, 40, 30);
-        context.drawImage(img, 660, 252, 12, 15, 50, 380, 25, 25);
+    context.drawImage(img, 660, 238, 26, 13, 60, 350, 40, 30);
+    context.drawImage(img, 660, 252, 12, 15, 50, 380, 25, 25);
+    if(mode === 1){
         context.drawImage(img, 660, 280, 26, 13, 60, 410, 40, 30);
         context.drawImage(img, 660, 294, 12, 15, 50, 440, 25, 25);
     }

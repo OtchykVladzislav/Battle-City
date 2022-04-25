@@ -1,19 +1,8 @@
-function hardStop() {
-    isLose()
-    start = false
-    window.cancelAnimationFrame(animateDraw)
-    window.cancelAnimationFrame(animateEvent)
-    window.cancelAnimationFrame(animateEnemy)
-    window.cancelAnimationFrame(animateUI)
-    return;
-}
-
-
 function isLose(){
     ctx.fillStyle="red"
     ctx.font='1px PixelFont';
-    ctx.fillText("GAME", 4.5, 6);
-    ctx.fillText("OVER", 4.5, 7);
+    ctx.fillText("GAME", 6, 7);
+    ctx.fillText("OVER", 6, 8);
     return setTimeout(() => {
         location.reload()
     }, 4000)

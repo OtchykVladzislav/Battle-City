@@ -4,24 +4,26 @@ var animateEnemy;
 
 let count;
 
+let timer = 0;
+
 var sumEnemy = 0;
 
 let spawnEnemy = [
     {
-        x: 1,
-        y: 0
+        x: 2,
+        y: 1
     },
     {
-        x: 11,
-        y: 0
+        x: 12,
+        y: 1
     },
     {
-        x: 8,
-        y: 0
+        x: 9,
+        y: 1
     },
     {
-        x: 4,
-        y: 0
+        x: 5,
+        y: 1
     }
 ]
 
@@ -121,10 +123,10 @@ function isLevelsEnemy() {
 
 function isDrawEnemy(){
     for(let i = 0; i < enemy.length; i++){
-        if(enemy[i].type === 1 && pause === false){
+        if(enemy[i].type === 1){
             ctx.drawImage(img, imgTypesTank[enemy[i].type][enemy[i].side - 1].x, imgTypesTank[enemy[i].type][enemy[i].side - 1].y, 25, 25, enemy[i].pos.x, enemy[i].pos.y, 1, 1);
         }
-        else if(enemy[i].type > 1 && pause === false){
+        else if(enemy[i].type > 1){
             ctx.drawImage(img, imgTypesTank[enemy[i].type][enemy[i].side - 1].x, imgTypesTank[enemy[i].type][enemy[i].side - 1].y, 26, 26, enemy[i].pos.x, enemy[i].pos.y, 1, 1);
         }
     }
@@ -152,11 +154,11 @@ function checkType(x,y,index){
 function checkLines() {
     for(let i = 0; i < enemy.length; i++){
         let direction;
-        if(enemy[i].pos.y === player.pos.y && enemy[i].shoot === false){
-            if(enemy[i].pos.x > player.pos.x){
+        if((enemy[i].pos.y === player.pos.y || ((enemy[i].pos.y === playerTwo.pos.y) && mode === 1)) && enemy[i].shoot === false){
+            if((enemy[i].pos.x > player.pos.x) || ((enemy[i].pos.x > playerTwo.pos.x) && mode === 1)){
                 direction = 3
             }
-            else if(enemy[i].pos.x < player.pos.x){
+            else if((enemy[i].pos.x < player.pos.x) || ((enemy[i].pos.x < playerTwo.pos.x) && mode === 1)){
                 direction = 4
             }
             enemy[i].shoot = true
@@ -171,12 +173,12 @@ function checkLines() {
                 index: i
             })
         }
-        if(enemy[i].pos.x === player.pos.x && enemy[i].shoot === false){
-            if(enemy[i].pos.y > player.pos.y){
+        if((enemy[i].pos.x === player.pos.x || ((enemy[i].pos.x === playerTwo.pos.x) && mode === 1)) && enemy[i].shoot === false){
+            if((enemy[i].pos.y > player.pos.y) || ((enemy[i].pos.y > playerTwo.pos.y) && mode === 1)){
                 direction = 1
 
             }
-            else if(enemy[i].pos.y < player.pos.y){
+            else if((enemy[i].pos.y < player.pos.y) || ((enemy[i].pos.y < playerTwo.pos.y) && mode === 1)){
                 direction = 2
             }
             enemy[i].shoot = true
@@ -189,6 +191,7 @@ function checkLines() {
                 speed: enemy[i].speedBullet,
                 damage: enemy[i].damage,
                 index: i
+
             })
         }
         //база
@@ -227,8 +230,6 @@ function checkLines() {
                 index: i
             })
         }
-        /*(enemy[i].pos.x === basePlayer.pos.x) || 
-        (enemy[i].pos.y === basePlayer.pos.y)){*/
     }
 }
 
@@ -259,23 +260,40 @@ function hitPlayer(x,y,object,index){
         if(enemy[object[index].index] !== undefined) enemy[object[index].index].shoot = false
         ctx.drawImage(img, 506, 59, 27, 28, x, y, 1, 1);
         player.pos = {
-            x: 4,
-            y: 12
+            x: 5,
+            y: 13
         }
         player.level = 0
+        object.splice(index, 1)
+    }
+    else if(x === playerTwo.pos.x && y === playerTwo.pos.y && bonusActive.immortal === false && mode === 1){
+        playerTwo.health -= object[index].damage
+        if(enemy[object[index].index] !== undefined) enemy[object[index].index].shoot = false
+        ctx.drawImage(img, 506, 59, 27, 28, x, y, 1, 1);
+        playerTwo.pos = {
+            x: 9,
+            y: 13
+        }
+        playerTwo.level = 0
         object.splice(index, 1)
     }
 }
 
 function isUpdateEnemy() {
-    if(enemy.length === 0){
-        count = 0;
+    if(pause === false){
+        if(enemy.length === 0){
+            count = 0;
+        }
+        isLevelsEnemy()
+        checkLines()
+        shootEnemy()
+        isDrawEnemy()
+        if((timer / 25) % 2 === 0 && timer !==0){
+            moveEnemy()
+        }
+        drawForest()
+        timer++
     }
-    isLevelsEnemy()
-    checkLines()
-    shootEnemy()
-    isDrawEnemy()
-    moveEnemy()
     animateEnemy = window.requestAnimationFrame(isUpdateEnemy)
 }
 

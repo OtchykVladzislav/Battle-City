@@ -3,8 +3,21 @@ ctx.scale(boxes, boxes);
 
 var player = {
     pos : {
-        x: 4,
-        y: 12
+        x: 5,
+        y: 13
+    },
+    health : 3,
+    side : 1,
+    damage: 1,
+    level : 0,
+    immortal: false,
+    speedBullet: 0.1 
+}
+
+var playerTwo = {
+    pos : {
+        x: 9,
+        y: 13
     },
     health : 3,
     side : 1,
@@ -22,8 +35,8 @@ var stage = 1;
 
 var basePlayer = {
     pos : {
-        x : 6,
-        y: 12
+        x : 7,
+        y: 13
     },
     health : 4
 }
@@ -32,24 +45,24 @@ var bonusCount = []
 
 var spawnBonus = [
     {
-        x: 0,
-        y: 12
+        x: 1,
+        y: 13
     },
     {
-        x: 12,
-        y: 0
+        x: 13,
+        y: 1
     },
     {
-        x: 6,
-        y: 6
+        x: 7,
+        y: 7
     },
     {
-        x: 12,
-        y: 12
+        x: 13,
+        y: 13
     },
     {
-        x: 0,
-        y: 0
+        x: 1,
+        y: 1
     }
 ]
 
@@ -64,31 +77,31 @@ var bulletEnemy = []
 var pause = false;
 
 document.addEventListener("keyup", (event) => {
-    if(event.keyCode === 87 && Math.ceil(player.pos.y) !== 0 && basePlayer.health > 0 && pause === false && start === true){
+    if(event.keyCode === 87 && basePlayer.health > 0 && pause === false && start === true){
         player.pos.y -= 1
         player.side = 1
-        if(isColides()){
+        if(isColides(player.pos.x,player.pos.y)){
             player.pos.y +=1
         }
     }
-    else if(event.keyCode === 83 && Math.ceil(player.pos.y) !== 12 && basePlayer.health > 0 && pause === false && start === true){
+    else if(event.keyCode === 83 && basePlayer.health > 0 && pause === false && start === true){
         player.pos.y += 1
         player.side = 2
-        if(isColides()){
+        if(isColides(player.pos.x,player.pos.y)){
             player.pos.y -=1
         }
     }
-    else if(event.keyCode === 65 && Math.ceil(player.pos.x) !== 0 && basePlayer.health > 0 && pause === false && start === true){
+    else if(event.keyCode === 65 && basePlayer.health > 0 && pause === false && start === true){
         player.pos.x -= 1
         player.side = 3
-        if(isColides()){
+        if(isColides(player.pos.x,player.pos.y)){
             player.pos.x +=1
         }
     }
-    else if(event.keyCode === 68 && Math.ceil(player.pos.x) !== 12 && basePlayer.health > 0 && pause === false && start === true){
+    else if(event.keyCode === 68 && basePlayer.health > 0 && pause === false && start === true){
         player.pos.x += 1
         player.side = 4
-        if(isColides()){
+        if(isColides(player.pos.x,player.pos.y)){
             player.pos.x -=1
         }
     }
@@ -97,7 +110,47 @@ document.addEventListener("keyup", (event) => {
             x: player.pos.x,
             y: player.pos.y,
             side: position[player.side],
-            number: player.side
+            number: player.side,
+            speed: player.speedBullet,
+            damage: player.damage
+        })
+    }
+    else if(mode === 1 && event.keyCode === 38 && basePlayer.health > 0 && pause === false && start === true){
+        playerTwo.pos.y -= 1
+        playerTwo.side = 1
+        if(isColides(playerTwo.pos.x,playerTwo.pos.y)){
+            playerTwo.pos.y +=1
+        }
+    }
+    else if(mode === 1 && event.keyCode === 40 && basePlayer.health > 0 && pause === false && start === true){
+        playerTwo.pos.y += 1
+        playerTwo.side = 2
+        if(isColides(playerTwo.pos.x,playerTwo.pos.y)){
+            playerTwo.pos.y -=1
+        }
+    }
+    else if(mode === 1 && event.keyCode === 37 && basePlayer.health > 0 && pause === false && start === true){
+        playerTwo.pos.x -= 1
+        playerTwo.side = 3
+        if(isColides(playerTwo.pos.x,playerTwo.pos.y)){
+            playerTwo.pos.x +=1
+        }
+    }
+    else if(mode === 1 && event.keyCode === 39 && basePlayer.health > 0 && pause === false && start === true){
+        playerTwo.pos.x += 1
+        playerTwo.side = 4
+        if(isColides(playerTwo.pos.x,playerTwo.pos.y)){
+            playerTwo.pos.x -=1
+        }
+    }
+    else if(mode === 1 && event.keyCode === 16 && basePlayer.health > 0 && pause === false && start === true){
+        bulletPlayer.push({
+            x: playerTwo.pos.x,
+            y: playerTwo.pos.y,
+            side: position[playerTwo.side],
+            number: playerTwo.side,
+            speed: playerTwo.speedBullet,
+            damage: playerTwo.damage
         })
     }
     else if(event.keyCode === 27 && start === true){
@@ -111,11 +164,11 @@ document.addEventListener("keyup", (event) => {
     }
 })
 
-function isColides(){
+function isColides(x,y){
     for (let i = 0; i < arena.length; i++) {
         for (let j = 0; j < arena[i].length; j++) {
             for(let k = 0; k < enemy.length; k++){
-                if(arena[player.pos.y][player.pos.x] === 1 || arena[player.pos.y][player.pos.x] === 2 || arena[player.pos.y][player.pos.x] === 9 || (player.pos.x === enemy[k].pos.x && player.pos.y === enemy[k].pos.y)){
+                if(arena[y][x] === 1 || arena[y][x] === 2 || arena[y][x] === 9 || arena[y][x] === 11 || (x === enemy[k].pos.x && y === enemy[k].pos.y)){
                     return 1
                 }
             }
@@ -128,6 +181,11 @@ function takeBonus() {
     for(let i = 0; i < arena.length; i++){
         for(let j = 0; j < arena[i].length; j++){
             if(i === player.pos.y && j === player.pos.x && arena[player.pos.y][player.pos.x] >= 3 && arena[player.pos.y][player.pos.x] <= 8){
+                bonusUp(arena[i][j])
+                arena[i][j] = 0
+                bonusCount.shift()
+            }
+            else if(mode === 1 && i === playerTwo.pos.y && j === playerTwo.pos.x && arena[playerTwo.pos.y][playerTwo.pos.x] >= 3 && arena[playerTwo.pos.y][playerTwo.pos.x] <= 8){
                 bonusUp(arena[i][j])
                 arena[i][j] = 0
                 bonusCount.shift()
@@ -179,9 +237,12 @@ function drawArena() {
             else if(arena[i][j] === 9){
                 ctx.drawImage(img, 253, 239, 27, 26, j, i, 1, 1);
             }
+            else if(arena[i][j] === 11){
+                ctx.fillStyle='#636363';
+                ctx.fillRect(j, i, 1, 1);
+            }
         }
     }
-    isDrawEnemy()
 }
 
 function drawForest() {
@@ -206,12 +267,28 @@ function checkLevel(){
         player.speedBullet = 0.25
         player.damage = 2
     }
+
+    if(playerTwo.level === 0){
+        playerTwo.speedBullet = 0.1
+    }
+    else if(playerTwo.level === 1){
+        playerTwo.speedBullet = 0.2
+    }
+    else if(playerTwo.level >= 2){
+        playerTwo.speedBullet = 0.25
+        playerTwo.damage = 2
+    }
 }
 
 function drawTank(){
     let position = isLevels[player.level]
     if(player.level === 0){ctx.drawImage(img, position[player.side - 1].x, position[player.side - 1].y, 23, 23,player.pos.x, player.pos.y, 1, 1)}
     else{ctx.drawImage(img, position[player.side - 1].x, position[player.side - 1].y, 25, 26,player.pos.x, player.pos.y, 1, 1)}
+    if(mode === 1){
+        let positionTwo = isLevelsTwo[playerTwo.level]
+        if(playerTwo.level === 0){ctx.drawImage(img, positionTwo[playerTwo.side - 1].x, positionTwo[playerTwo.side - 1].y, 23, 23,playerTwo.pos.x, playerTwo.pos.y, 1, 1)}
+        else{ctx.drawImage(img, positionTwo[playerTwo.side - 1].x, positionTwo[playerTwo.side - 1].y, 25, 26,playerTwo.pos.x, playerTwo.pos.y, 1, 1)}
+    }
 }
 
 function hitArena(x,y,object,index,name) {
@@ -235,13 +312,13 @@ function hitArena(x,y,object,index,name) {
                     arena[i][j] = 0
                 }
             }
+            else if(x === j && y === i && arena[i][j] == 11){
+                if(name !== "bulletPlayer" && enemy[object[index].index] !== undefined){
+                    enemy[object[index].index].shoot = false
+                }
+                object.splice(index,1)
+            }
         }
-    }
-    if(x < 0 || y < 0 || x >= 13 || y >= 13){
-        if(name !== "bulletPlayer" && enemy[object[index].index] !== undefined){
-            enemy[object[index].index].shoot = false
-        }
-        object.splice(index,1)
     }
     hitBase(x,y,object,index, name)
     if(name === "bulletPlayer"){
@@ -276,6 +353,9 @@ function bonusUp(elem) {
     }
     else if(elem === 4){
         player.health += 1
+        if(mode === 1){
+            playerTwo.health += 1
+        }
     }
     else if(elem === 5){
         enemy.splice(0, enemy.length)
@@ -288,13 +368,16 @@ function bonusUp(elem) {
     }
     else if(elem === 8){
         if(player.level !== 3){player.level += 1}
+        if(mode === 1 && playerTwo.level !== 3){
+            playerTwo.level += 1
+        }
     }
 }
 
 
 function hitBase(x,y,object,index, name){
     if(x === basePlayer.pos.x && y === basePlayer.pos.y){
-        basePlayer.health -= player.damage
+        basePlayer.health -= object[index].damage
         if(name !== "bulletPlayer" && enemy[object[index].index] !== undefined){
             enemy[object[index].index].shoot = false
         }
@@ -305,8 +388,8 @@ function hitBase(x,y,object,index, name){
 
 function hitEnemy(x,y,object,index) {
     for(let i = 0; i < enemy.length; i++){
-        if(x === Math.floor(enemy[i].pos.x) && y === Math.floor(enemy[i].pos.y)){//поменять цикл исправить ошибку
-            enemy[i].health -= player.damage
+        if(x === Math.floor(enemy[i].pos.x) && y === Math.floor(enemy[i].pos.y)){
+            enemy[i].health -= object[index].damage
             ctx.drawImage(img, 506, 59, 27, 28, x, y, 1, 1);
             if(enemy[i].health <= 0){
                 checkType(enemy[i].pos.x, enemy[i].pos.y,enemy[i].type)
@@ -324,37 +407,29 @@ function isShoot(){
             positionBullet[bulletPlayer[i].number - 1].height, bulletPlayer[i].x + 0.4, bulletPlayer[i].y + 0.4, 0.2 , 0.2)
 
         if(bulletPlayer[i].side === "up"){
-            bulletPlayer[i].y -= player.speedBullet
+            bulletPlayer[i].y -= bulletPlayer[i].speed
         }
         else if(bulletPlayer[i].side === "down"){
-            bulletPlayer[i].y += player.speedBullet
+            bulletPlayer[i].y += bulletPlayer[i].speed
         }
         else if(bulletPlayer[i].side === "left"){
-            bulletPlayer[i].x -= player.speedBullet
+            bulletPlayer[i].x -= bulletPlayer[i].speed
         }
         else if(bulletPlayer[i].side === "right"){
-            bulletPlayer[i].x += player.speedBullet
+            bulletPlayer[i].x += bulletPlayer[i].speed
         }
         hitArena(Math.floor(bulletPlayer[i].x), Math.floor(bulletPlayer[i].y), bulletPlayer,i,"bulletPlayer")
     }
 }
 
 function isMode(){
-    if(mode === 0){
-        isShoot()
-        drawTank()
-        if(bonusActive.immortal === true){
-            ctx.drawImage(img, 477, 85, 27, 27, player.pos.x, player.pos.y, 1, 1)
-        }
-        drawForest()
+    isShoot()
+    drawTank()
+    if(bonusActive.immortal === true){
+        ctx.drawImage(img, 477, 85, 27, 27, player.pos.x, player.pos.y, 1, 1)
+        if(mode === 1) ctx.drawImage(img, 477, 85, 27, 27, playerTwo.pos.x, playerTwo.pos.y, 1, 1)
     }
-    else if(mode === 1){
-        ctx.fillStyle = "black";
-        ctx.fillRect(0,0,13,13);
-        ctx.fillStyle = "white"
-        ctx.font='2px Verdana';
-        ctx.fillText("No mode", 2, 7);
-    }
+    drawForest()
 }
 
 function isUpdateDraw(){
@@ -363,8 +438,14 @@ function isUpdateDraw(){
         isDrawBase()
         isMode()
         checkLevel()
-        if(basePlayer.health <= 0 || player.health <= 0){
-            hardStop()
+        if(basePlayer.health <= 0 || player.health <= 0 || playerTwo.health <= 0){
+            isLose()
+            start = false
+            window.cancelAnimationFrame(animateDraw)
+            window.cancelAnimationFrame(animateEvent)
+            window.cancelAnimationFrame(animateEnemy)
+            window.cancelAnimationFrame(animateUI)
+            return;
         }
     }
     animateDraw = window.requestAnimationFrame(isUpdateDraw)
@@ -386,7 +467,6 @@ function isLogicBonus(){
             }, 10000)
         }
         if(bonusActive.immortal === true){
-            ctx.drawImage(img, 477, 85, 27, 27, player.pos.x, player.pos.y, 1, 1)
             timeout = setTimeout(() => {
                 bonusActive.immortal = false
                 clearTimeout(timeout)
